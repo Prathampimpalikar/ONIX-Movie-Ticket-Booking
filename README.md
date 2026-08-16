@@ -1,7 +1,14 @@
 # OINX - Movie Booking Platform
 
-A modern cinema ticket booking web application built with React, Vite, Tailwind CSS, Clerk Authentication, and Lucide Icons.
+<div align="center">
 
+<img src="./public/images/onix-logo.png" alt="ONIX Movie Ticket Booking" width="700">
+
+<h1>ONIX — Movie Ticket Booking</h1>
+
+<p>A modern full-stack movie discovery and ticket booking platform.</p>
+
+</div>
 ## Features
 - **Cinematic Hero Banner**: Dynamic hero presentation featuring upcoming releases like *Spider-Man: Brand New Day*.
 - **Authentication**: Seamless user login and session management powered by Clerk.
