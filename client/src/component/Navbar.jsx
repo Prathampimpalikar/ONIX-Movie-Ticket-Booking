@@ -11,8 +11,8 @@ const Navbar = () => {
 
     const navigate = useNavigate()
     return (
-        <div className='fixed top-0 left-0 w-full z-50 flex items-center justify-between px-6 md:px-16 lg:px-36 py-5'>
-            <Link to='/' className='flex items-center'>
+        <div className='fixed top-0 left-0 w-full z-50 flex items-center justify-between md:justify-start md:gap-10 px-6 md:px-16 lg:px-36 py-5'>
+            <Link to='/' className='flex items-center shrink-0'>
                 <img src={assets.logo} alt="ONIX" className='h-12 md:h-14 w-auto object-contain' />
             </Link>
 
