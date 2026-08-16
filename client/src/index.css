@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #E20137;
+  --color-primary-dull: #2e2cbeff;
+}
+* {
+  font-family: "Outfit", sans-serif;
+  scrollbar-width: thin;
+  scrollbar-color: #787777 #86baca;
+}
+
+body {
+  background-color: #050505;
+  color: #ffffff;
+}
+
+.hero-bg {
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center 55%;
+}
+
+@media (min-width: 768px) {
+  .hero-bg {
+    background-position: 80% 55%;
+  }
+}
+
+@media (min-width: 1280px) {
+  .hero-bg {
+    background-position: 75% 55%;
+  }
+}
