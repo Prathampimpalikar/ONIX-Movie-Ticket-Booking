@@ -1,10 +1,10 @@
-# 🎬 ONIX — Movie Ticket Booking
+# 🎬 OINX — Movie Ticket Booking
 
 <div align="center">
 
 <img src="./client/public/images/oinx-logo.png" alt="ONIX Logo" width="220" height="220" style="border-radius: 50%; object-fit: cover;">
 
-<h2>ONIX — Movie Ticket Booking</h2>
+<h2>OINX — Movie Ticket Booking</h2>
 
 <p>A modern full-stack movie discovery and ticket booking platform.</p>
 
@@ -16,9 +16,9 @@
 
 ---
 
-## 📌 About ONIX
+## 📌 About OINX
 
-**ONIX** is a modern movie ticket booking platform designed to make discovering movies and booking cinema seats simple and convenient.
+**OINX** is a modern movie ticket booking platform designed to make discovering movies and booking cinema seats simple and convenient.
 
 Users can explore movies, view movie details, select seats, and manage their bookings through a clean and responsive interface.
 
