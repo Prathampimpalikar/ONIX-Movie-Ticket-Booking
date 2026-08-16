@@ -1,8 +1,8 @@
-# OINX - Movie Booking Platform
+# ONIX - Movie Booking Platform
 
 <div align="center">
 
-<img src="./public/images/onix-logo.png" alt="ONIX Movie Ticket Booking" width="700">
+<img src="./public/images/oinx-logo.png" alt="ONIX Movie Ticket Booking" width="700">
 
 <h1>ONIX — Movie Ticket Booking</h1>
 
