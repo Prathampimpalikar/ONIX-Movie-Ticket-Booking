@@ -1,4 +1,5 @@
-import logo from './logo.svg'
+import logo from './onixLogo.png'
+import onixLogo from './onixLogo.png'
 import marvelLogo from './marvelLogo.svg'
 import googlePlay from './googlePlay.svg'
 import appStore from './appStore.svg'
@@ -9,6 +10,7 @@ import spiderManBg from './spiderManBg.png'
 
 export const assets = {
     logo,
+    onixLogo,
     marvelLogo,
     googlePlay,
     appStore,
