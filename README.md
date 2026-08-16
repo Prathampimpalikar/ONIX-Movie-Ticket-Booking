@@ -2,9 +2,9 @@
 
 <div align="center">
 
-<img src="./public/images/oinx-logo.png" alt="ONIX Movie Ticket Booking" width="700">
+<img src="./public/images/oinx-logo.png" alt="OINX Movie Ticket Booking" width="700">
 
-<h1>ONIX — Movie Ticket Booking</h1>
+<h1>OINX — Movie Ticket Booking</h1>
 
 <p>A modern full-stack movie discovery and ticket booking platform.</p>
 
