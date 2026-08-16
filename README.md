@@ -1,52 +1,132 @@
-# ONIX - Movie Booking Platform
+# 🎬 ONIX — Movie Ticket Booking
 
 <div align="center">
 
-<img src="./client/public/images/oinx-logo.png" alt="ONIX Movie Ticket Booking" width="700">
+<img src="./client/public/images/oinx-logo.png" alt="ONIX Logo" width="220" height="220" style="border-radius: 50%; object-fit: cover;">
 
-<h1>ONIX — Movie Ticket Booking</h1>
+<h2>ONIX — Movie Ticket Booking</h2>
 
 <p>A modern full-stack movie discovery and ticket booking platform.</p>
 
+<p>
+  <strong>🎥 Discover Movies • 💺 Book Seats • ❤️ Save Favorites</strong>
+</p>
+
 </div>
-## Features
-- **Cinematic Hero Banner**: Dynamic hero presentation featuring upcoming releases like *Spider-Man: Brand New Day*.
-- **Authentication**: Seamless user login and session management powered by Clerk.
-- **Seat Booking & Layout**: Interactive seat selection system.
-- **Movie Catalog & Details**: Browse upcoming and trending movies, trailers, and cast information.
-- **My Bookings & Favorites**: Track reservations and save favorite movies.
 
-## Tech Stack
-- **Frontend**: React 19, Vite, Tailwind CSS v4, React Router v7
-- **Authentication**: Clerk React SDK
-- **Icons**: Lucide React
-- **Notifications**: React Hot Toast
+---
 
-## Getting Started
+## 📌 About ONIX
 
-### Prerequisites
-- Node.js (v18+ recommended)
-- npm / yarn / pnpm
+**ONIX** is a modern movie ticket booking platform designed to make discovering movies and booking cinema seats simple and convenient.
 
-### Installation
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/<your-username>/OINX.git
-   cd OINX/client
-   ```
+Users can explore movies, view movie details, select seats, and manage their bookings through a clean and responsive interface.
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+---
 
-3. Configure Environment Variables:
-   Create a `.env.local` file inside the `client/` directory with your Clerk key:
-   ```env
-   VITE_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
-   ```
+## ✨ Features
 
-4. Run the development server:
-   ```bash
-   npm run dev
-   ```
+* 🎬 **Movie Discovery** — Browse upcoming and trending movies.
+* 🦸 **Hero Banner** — Cinematic movie presentation featuring upcoming releases.
+* 🔐 **Authentication** — Secure login and session management using Clerk.
+* 💺 **Seat Booking** — Interactive cinema seat selection.
+* 🎞️ **Movie Details** — View trailers, cast, and movie information.
+* 🎟️ **My Bookings** — View and manage booked tickets.
+* ❤️ **Favorites** — Save movies for later.
+* 📱 **Responsive UI** — Works across desktop and mobile screens.
+
+---
+
+## 🛠️ Tech Stack
+
+| Technology         | Purpose                  |
+| ------------------ | ------------------------ |
+| ⚛️ React 19        | Frontend                 |
+| ⚡ Vite             | Development & Build Tool |
+| 🎨 Tailwind CSS v4 | UI Styling               |
+| 🧭 React Router v7 | Navigation               |
+| 🔐 Clerk           | Authentication           |
+| 🖼️ Lucide React   | Icons                    |
+| 🔔 React Hot Toast | Notifications            |
+
+---
+
+## 📂 Project Structure
+
+```text
+ONIX-Movie-Ticket-Booking/
+│
+├── client/
+│   ├── public/
+│   │   └── images/
+│   │       └── oinx-logo.png
+│   │
+│   ├── src/
+│   ├── package.json
+│   └── ...
+│
+├── README.md
+└── ...
+```
+
+---
+
+## 🚀 Getting Started
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/Prathampimpalikar/ONIX-Movie-Ticket-Booking.git
+```
+
+### 2. Go to the Client Folder
+
+```bash
+cd ONIX-Movie-Ticket-Booking/client
+```
+
+### 3. Install Dependencies
+
+```bash
+npm install
+```
+
+### 4. Configure Environment Variables
+
+Create a `.env.local` file inside the `client` folder:
+
+```env
+VITE_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+```
+
+Replace `your_clerk_publishable_key` with your actual Clerk publishable key.
+
+### 5. Start the Development Server
+
+```bash
+npm run dev
+```
+
+Open the local URL shown in your terminal.
+
+---
+
+## 🎯 Project Goal
+
+The goal of **ONIX** is to provide a simple and modern movie-booking experience where users can:
+
+**Discover → Explore → Select Seats → Book → Manage Tickets**
+
+---
+
+## 👨‍💻 Developed With
+
+<div align="center">
+
+### ONIX Movie Ticket Booking
+
+**Built with React, Vite & Tailwind CSS**
+
+⭐ If you like this project, consider giving the repository a star!
+
+</div>
