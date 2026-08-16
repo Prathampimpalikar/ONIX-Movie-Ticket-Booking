@@ -19,17 +19,5 @@ body {
 .hero-bg {
   background-size: cover;
   background-repeat: no-repeat;
-  background-position: center 55%;
-}
-
-@media (min-width: 768px) {
-  .hero-bg {
-    background-position: 80% 55%;
-  }
-}
-
-@media (min-width: 1280px) {
-  .hero-bg {
-    background-position: 75% 55%;
-  }
+  background-position: center center;
 }
