@@ -22,20 +22,28 @@ export const assets = {
 
 export const dummyTrailers = [
     {
-        image: "https://img.youtube.com/vi/WpW36ldAqnM/maxresdefault.jpg",
-        videoUrl: 'https://www.youtube.com/watch?v=WpW36ldAqnM'
+        image: "https://img.youtube.com/vi/xa9Aqo1lmZo/maxresdefault.jpg",
+        videoUrl: 'https://www.youtube.com/watch?v=xa9Aqo1lmZo',
+        title: "Spider-Man",
+        status: "Booking Open"
     },
     {
-        image: "https://img.youtube.com/vi/-sAOWhvheK8/maxresdefault.jpg",
-        videoUrl: 'https://www.youtube.com/watch?v=-sAOWhvheK8'
+        image: "https://img.youtube.com/vi/xLYuvLspFgQ/maxresdefault.jpg",
+        videoUrl: 'https://www.youtube.com/watch?v=xLYuvLspFgQ',
+        title: "Avengers: Doomsday",
+        status: "Coming Soon"
     },
     {
         image: "https://img.youtube.com/vi/1pHDWnXmK7Y/maxresdefault.jpg",
-        videoUrl: 'https://www.youtube.com/watch?v=1pHDWnXmK7Y'
+        videoUrl: 'https://www.youtube.com/watch?v=1pHDWnXmK7Y',
+        title: "Mission: Impossible",
+        status: "Booking Open"
     },
     {
         image: "https://img.youtube.com/vi/umiKiW4En9g/maxresdefault.jpg",
-        videoUrl: 'https://www.youtube.com/watch?v=umiKiW4En9g'
+        videoUrl: 'https://www.youtube.com/watch?v=umiKiW4En9g',
+        title: "Until Dawn",
+        status: "Booking Open"
     },
 ]
 
