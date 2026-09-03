@@ -4,10 +4,13 @@ import { assets } from '../assets/assets'
 import { MenuIcon, SearchIcon, TicketPlus, XIcon } from "lucide-react"
 import { useUser, UserButton, useClerk } from "@clerk/react"
 
+import { useFavorites } from "../context/FavoritesContext"
+
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false)
     const { user } = useUser()
     const { openSignIn } = useClerk()
+    const { favorites } = useFavorites()
     const navigate = useNavigate()
 
     return (
@@ -27,7 +30,14 @@ const Navbar = () => {
                     <Link onClick={() => { window.scrollTo(0, 0); setIsOpen(false); }} to='/movie' className='text-gray-300 hover:text-white transition-colors duration-200'>Movies</Link>
                     <Link onClick={() => { window.scrollTo(0, 0); setIsOpen(false); }} to='/theatre' className='text-gray-300 hover:text-white transition-colors duration-200'>Theaters</Link>
                     <Link onClick={() => { window.scrollTo(0, 0); setIsOpen(false); }} to='/releases' className='text-gray-300 hover:text-white transition-colors duration-200'>Releases</Link>
-                    <Link onClick={() => { window.scrollTo(0, 0); setIsOpen(false); }} to='/Favourite' className='text-gray-300 hover:text-white transition-colors duration-200'>Favorites</Link>
+                    <Link onClick={() => { window.scrollTo(0, 0); setIsOpen(false); }} to='/Favourite' className='flex items-center gap-1.5 text-gray-300 hover:text-white transition-colors duration-200'>
+                        Favorites
+                        {favorites.length > 0 && (
+                            <span className='px-1.5 py-0.5 text-[11px] bg-primary text-white rounded-full font-semibold leading-none'>
+                                {favorites.length}
+                            </span>
+                        )}
+                    </Link>
                 </div>
 
                 <div className='flex items-center gap-4'>
@@ -53,4 +63,4 @@ const Navbar = () => {
     )
 }
 
-export default Navbar
+export default Navbar

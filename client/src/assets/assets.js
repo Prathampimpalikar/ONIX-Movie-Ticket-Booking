@@ -1,49 +1,43 @@
-import logo from './onixLogo.png'
-import onixLogo from './onixLogo.png'
+import logo from './logo.svg'
 import marvelLogo from './marvelLogo.svg'
 import googlePlay from './googlePlay.svg'
 import appStore from './appStore.svg'
 import screenImage from './screenImage.svg'
 import profile from './profile.png'
-import backgroundImage from './backgroundImage.png'
 import spiderManBg from './spiderManBg.png'
+import originalSpiderMan from './originalSpiderMan.png'
+import backgroundImage from './backgroundImage.png'
+import avengersBg from './avengersBg.jpg'
 
 export const assets = {
     logo,
-    onixLogo,
     marvelLogo,
     googlePlay,
     appStore,
     screenImage,
     profile,
+    spiderManBg,
+    originalSpiderMan,
     backgroundImage,
-    spiderManBg
+    avengersBg
 }
 
 export const dummyTrailers = [
     {
-        image: "https://img.youtube.com/vi/xa9Aqo1lmZo/maxresdefault.jpg",
-        videoUrl: 'https://www.youtube.com/watch?v=xa9Aqo1lmZo',
-        title: "Spider-Man",
-        status: "Booking Open"
+        image: "https://img.youtube.com/vi/WpW36ldAqnM/maxresdefault.jpg",
+        videoUrl: 'https://www.youtube.com/watch?v=WpW36ldAqnM'
     },
     {
-        image: "https://img.youtube.com/vi/xLYuvLspFgQ/maxresdefault.jpg",
-        videoUrl: 'https://www.youtube.com/watch?v=xLYuvLspFgQ',
-        title: "Avengers: Doomsday",
-        status: "Coming Soon"
+        image: "https://img.youtube.com/vi/-sAOWhvheK8/maxresdefault.jpg",
+        videoUrl: 'https://www.youtube.com/watch?v=-sAOWhvheK8'
     },
     {
         image: "https://img.youtube.com/vi/1pHDWnXmK7Y/maxresdefault.jpg",
-        videoUrl: 'https://www.youtube.com/watch?v=1pHDWnXmK7Y',
-        title: "Mission: Impossible",
-        status: "Booking Open"
+        videoUrl: 'https://www.youtube.com/watch?v=1pHDWnXmK7Y'
     },
     {
         image: "https://img.youtube.com/vi/umiKiW4En9g/maxresdefault.jpg",
-        videoUrl: 'https://www.youtube.com/watch?v=umiKiW4En9g',
-        title: "Until Dawn",
-        status: "Booking Open"
+        videoUrl: 'https://www.youtube.com/watch?v=umiKiW4En9g'
     },
 ]
 
@@ -68,6 +62,43 @@ const dummyCastsData = [
 ]
 
 export const dummyShowsData = [
+    {
+        "_id": "spiderman-brand-new-day",
+        "id": "spiderman-brand-new-day",
+        "title": "Spider-Man: Brand New Day",
+        "overview": "Peter Parker navigates life in New York City balancing his responsibility as Spider-Man while facing powerful new adversaries and defending those he loves.",
+        "poster_path": originalSpiderMan,
+        "backdrop_path": spiderManBg,
+        "genres": [
+            { "id": 28, "name": "Action" },
+            { "id": 12, "name": "Adventure" },
+            { "id": 878, "name": "Sci-Fi" }
+        ],
+        "casts": [
+            { 
+                "name": "Tom Holland", 
+                "character": "Peter Parker / Spider-Man",
+                "profile_path": "https://cdn.britannica.com/58/215458-050-B020B2F2/Tom-Holland-2019.jpg" 
+            },
+            { 
+                "name": "Zendaya", 
+                "character": "MJ",
+                "profile_path": "https://upload.wikimedia.org/wikipedia/commons/2/28/Zendaya_-_2019_by_Glenn_Francis.jpg" 
+            },
+            { 
+                "name": "Mark Ruffalo", 
+                "character": "Bruce Banner / Hulk",
+                "profile_path": "https://upload.wikimedia.org/wikipedia/commons/1/11/Mark_Ruffalo_%2836201774756%29_%28cropped%29.jpg" 
+            }
+        ],
+        "release_date": "2026-07-24",
+        "original_language": "en",
+        "tagline": "A brand new day begins.",
+        "vote_average": 9.4,
+        "vote_count": 32000,
+        "runtime": 168,
+        "trailer_url": "https://www.youtube.com/watch?v=JfVOs4VSpmA",
+    },
     {
         "_id": "324544",
         "id": 324544,
