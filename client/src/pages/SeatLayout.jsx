@@ -58,7 +58,7 @@ const SeatLayout = () => {
     const [selectedTheatre, setSelectedTheatre] = useState(THEATRES[0])
     const [selectedSeats, setSelectedSeats] = useState([])
     const [occupiedSeats, setOccupiedSeats] = useState(new Set())
-    const [userEmail, setUserEmail] = useState('user@onix.com')
+    const [userEmail, setUserEmail] = useState('prathampimpalikar@gmail.com')
     const [emailModalBooking, setEmailModalBooking] = useState(null)
 
     useEffect(() => {
