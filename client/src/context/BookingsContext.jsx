@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import toast from 'react-hot-toast'
+import { sendRealEmailTicket } from '../lib/emailService'
 
 const BookingsContext = createContext()
 
@@ -34,14 +35,16 @@ export const BookingsProvider = ({ children }) => {
         }
 
         setBookings((prev) => [booking, ...prev])
-        toast.success(`Booking confirmed! Email ticket sent to ${newBookingData.userEmail}`)
+        
+        // Dispatch real email ticket to recipient inbox
+        sendRealEmailTicket(booking)
         return booking
     }
 
     const resendEmailTicket = (bookingId) => {
         const target = bookings.find((b) => b.id === bookingId)
         if (target) {
-            toast.success(`Ticket email resent to ${target.userEmail}!`)
+            sendRealEmailTicket(target)
         }
     }
 

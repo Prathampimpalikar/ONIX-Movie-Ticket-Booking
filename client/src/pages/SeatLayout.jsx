@@ -466,14 +466,15 @@ const SeatLayout = () => {
                             </div>
 
                             <div className='flex flex-wrap items-center justify-between gap-3 pt-2'>
-                                <a
-                                    href={generateMailtoUrl(emailModalBooking)}
-                                    target='_blank'
-                                    rel='noreferrer'
+                                <button
+                                    onClick={() => {
+                                        toast.success(`Resending real ticket email to ${emailModalBooking.userEmail}...`)
+                                        sendRealEmailTicket(emailModalBooking)
+                                    }}
                                     className='flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold cursor-pointer transition shadow-md'
                                 >
-                                    <ExternalLink className='w-4 h-4' /> Open in Gmail / Mail App
-                                </a>
+                                    <Mail className='w-4 h-4' /> Resend Ticket Email
+                                </button>
 
                                 <button
                                     onClick={() => {
