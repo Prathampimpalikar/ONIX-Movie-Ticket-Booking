@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import { Link, useNavigate } from 'react-router-dom'
 import { assets } from '../assets/assets'
 import { MenuIcon, SearchIcon, TicketPlus, XIcon } from "lucide-react"
-import { useUser, UserButton, useClerk } from "@clerk/react"
+import { useUser, UserButton, useClerk } from "@clerk/clerk-react"
 
 import { useFavorites } from "../context/FavoritesContext"
 
