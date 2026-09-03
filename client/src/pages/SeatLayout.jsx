@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { useParams, useNavigate, Link } from 'react-router-dom'
-import { ChevronLeft, Calendar, Clock, Ticket, Info, CheckCircle2, Armchair, ShieldCheck } from 'lucide-react'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
+import { ChevronLeft, ChevronRight, Calendar, Clock, Ticket, Mail, CheckCircle2, Armchair, ShieldCheck, Download, Printer, X, Film } from 'lucide-react'
 import { dummyShowsData } from '../assets/assets'
 import BlurCircle from '../component/BlurCircle'
 import { useBookings } from '../context/BookingsContext'
@@ -13,21 +13,20 @@ const THEATRES = [
     'ONIX Grand 4DX - Hall 3'
 ]
 
-// Rows configuration
+// Rows configuration in INR (₹)
 const ROWS = [
-    { row: 'A', type: 'VIP Recliner', price: 18 },
-    { row: 'B', type: 'VIP Recliner', price: 18 },
-    { row: 'C', type: 'Executive', price: 14 },
-    { row: 'D', type: 'Executive', price: 14 },
-    { row: 'E', type: 'Executive', price: 14 },
-    { row: 'F', type: 'Executive', price: 14 },
-    { row: 'G', type: 'Standard', price: 10 },
-    { row: 'H', type: 'Standard', price: 10 },
+    { row: 'A', type: 'VIP Recliner', price: 350 },
+    { row: 'B', type: 'VIP Recliner', price: 350 },
+    { row: 'C', type: 'Executive', price: 250 },
+    { row: 'D', type: 'Executive', price: 250 },
+    { row: 'E', type: 'Executive', price: 250 },
+    { row: 'F', type: 'Executive', price: 250 },
+    { row: 'G', type: 'Standard', price: 180 },
+    { row: 'H', type: 'Standard', price: 180 },
 ]
 
 const SEATS_PER_ROW = 12
 
-// Default pre-occupied seats generator for realism
 const getOccupiedSeats = (id, time) => {
     const seed = (id + time).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
     const occupied = new Set()
@@ -43,24 +42,50 @@ const getOccupiedSeats = (id, time) => {
 
 const SeatLayout = () => {
     const { id, date } = useParams()
+    const location = useLocation()
     const navigate = useNavigate()
     const { addBooking } = useBookings()
 
+    const searchParams = new URLSearchParams(location.search)
+    const initialTime = searchParams.get('time') || SHOW_TIMES[2]
+
     const movie = dummyShowsData.find((m) => String(m._id || m.id) === String(id)) || dummyShowsData[0]
 
-    const [selectedTime, setSelectedTime] = useState(SHOW_TIMES[2]) // default 5:00 PM
+    // Generate upcoming 10 days
+    const [dateList, setDateList] = useState([])
+    const [selectedDateObj, setSelectedDateObj] = useState(null)
+    const [selectedTime, setSelectedTime] = useState(initialTime)
     const [selectedTheatre, setSelectedTheatre] = useState(THEATRES[0])
     const [selectedSeats, setSelectedSeats] = useState([])
     const [occupiedSeats, setOccupiedSeats] = useState(new Set())
+    const [userEmail, setUserEmail] = useState('user@onix.com')
+    const [emailModalBooking, setEmailModalBooking] = useState(null)
 
     useEffect(() => {
         window.scrollTo(0, 0)
+        
+        // Generate upcoming dates
+        const dates = []
+        const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+        for (let i = 0; i < 14; i++) {
+            const d = new Date()
+            d.setDate(d.getDate() + i)
+            dates.push({
+                day: daysOfWeek[d.getDay()],
+                date: d.getDate(),
+                fullDate: d.toISOString().split('T')[0]
+            })
+        }
+        setDateList(dates)
+
+        const activeDate = dates.find(d => d.fullDate === date) || dates[0]
+        setSelectedDateObj(activeDate)
         setOccupiedSeats(getOccupiedSeats(movie._id || movie.id, selectedTime))
         setSelectedSeats([])
-    }, [id, selectedTime, movie._id, movie.id])
+    }, [id, date, selectedTime, movie._id, movie.id])
 
-    const formattedDate = date
-        ? new Date(date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })
+    const formattedDateStr = selectedDateObj
+        ? new Date(selectedDateObj.fullDate).toLocaleDateString('en-IN', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })
         : 'Today'
 
     const handleSeatClick = (seatId, isOccupied) => {
@@ -70,21 +95,26 @@ const SeatLayout = () => {
         )
     }
 
-    // Calculate subtotal
+    // Subtotal in INR
     const calculateSubtotal = () => {
         return selectedSeats.reduce((sum, seatId) => {
             const rowLabel = seatId.charAt(0)
             const rowConfig = ROWS.find((r) => r.row === rowLabel)
-            return sum + (rowConfig ? rowConfig.price : 12)
+            return sum + (rowConfig ? rowConfig.price : 200)
         }, 0)
     }
 
-    const convenienceFee = selectedSeats.length > 0 ? selectedSeats.length * 1.5 : 0
+    const convenienceFee = selectedSeats.length > 0 ? selectedSeats.length * 30 : 0
     const totalAmount = calculateSubtotal() + convenienceFee
 
     const handleProceedToBook = () => {
         if (selectedSeats.length === 0) {
             toast.error('Please select at least one seat to proceed')
+            return
+        }
+
+        if (!userEmail || !userEmail.includes('@')) {
+            toast.error('Please enter a valid email address for ticket delivery')
             return
         }
 
@@ -94,19 +124,20 @@ const SeatLayout = () => {
             posterPath: movie.poster_path || movie.backdrop_path,
             backdropPath: movie.backdrop_path || movie.poster_path,
             runtime: movie.runtime || 120,
-            showDate: date || new Date().toISOString().split('T')[0],
-            formattedShowDate: formattedDate,
+            showDate: selectedDateObj?.fullDate || date || new Date().toISOString().split('T')[0],
+            formattedShowDate: formattedDateStr,
             showTime: selectedTime,
             theatre: selectedTheatre,
             seats: selectedSeats.sort(),
             subtotal: calculateSubtotal(),
             convenienceFee,
             totalAmount,
-            userEmail: 'user@onix.com'
+            userEmail: userEmail.trim(),
+            currency: '₹'
         }
 
-        addBooking(newBooking)
-        navigate('/mybooking')
+        const bookingResult = addBooking(newBooking)
+        setEmailModalBooking(bookingResult)
     }
 
     return (
@@ -114,7 +145,7 @@ const SeatLayout = () => {
             <BlurCircle top='100px' right='50px' />
             <BlurCircle top='400px' left='20px' />
 
-            {/* Top Navigation & Movie Summary Header */}
+            {/* Top Navigation & Movie Header */}
             <div className='flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-gray-800/80 mb-8'>
                 <div className='flex items-center gap-4'>
                     <button
@@ -127,13 +158,13 @@ const SeatLayout = () => {
                         <h1 className='text-2xl sm:text-3xl font-bold text-white flex items-center gap-3'>
                             {movie.title}
                             <span className='text-xs px-2.5 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/30 font-medium'>
-                                2D / IMAX
+                                2D / IMAX 4K
                             </span>
                         </h1>
                         <div className='flex flex-wrap items-center gap-3 text-xs sm:text-sm text-gray-400 mt-1'>
                             <span className='flex items-center gap-1.5'>
                                 <Calendar className='w-3.5 h-3.5 text-primary' />
-                                {formattedDate}
+                                {formattedDateStr}
                             </span>
                             <span>•</span>
                             <span className='flex items-center gap-1.5'>
@@ -144,9 +175,9 @@ const SeatLayout = () => {
                     </div>
                 </div>
 
-                {/* Theatre Selection Dropdown */}
+                {/* Theatre Dropdown */}
                 <div className='flex items-center gap-3 self-start md:self-auto'>
-                    <span className='text-xs text-gray-400 font-medium hidden sm:inline'>Cinema:</span>
+                    <span className='text-xs text-gray-400 font-medium hidden sm:inline'>Cinema Hall:</span>
                     <select
                         value={selectedTheatre}
                         onChange={(e) => setSelectedTheatre(e.target.value)}
@@ -161,35 +192,63 @@ const SeatLayout = () => {
                 </div>
             </div>
 
-            {/* Showtime Selection Buttons */}
-            <div className='mb-10 flex flex-col sm:flex-row items-start sm:items-center gap-4 bg-white/5 border border-white/10 p-4 rounded-2xl backdrop-blur-md'>
-                <span className='text-sm font-semibold text-gray-300 shrink-0 flex items-center gap-2'>
-                    <Clock className='w-4 h-4 text-primary' /> Select Showtime:
-                </span>
-                <div className='flex flex-wrap items-center gap-2.5 w-full'>
-                    {SHOW_TIMES.map((time, idx) => {
-                        const isSelected = selectedTime === time
-                        return (
-                            <button
-                                key={idx}
-                                onClick={() => setSelectedTime(time)}
-                                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all duration-200 cursor-pointer ${
-                                    isSelected
-                                        ? 'bg-primary text-white shadow-lg shadow-primary/40 scale-105 font-bold'
-                                        : 'bg-black/50 border border-gray-800 text-gray-300 hover:border-gray-600 hover:text-white'
-                                }`}
-                            >
-                                {time}
-                            </button>
-                        )
-                    })}
+            {/* Date & Showtime Selector Bar */}
+            <div className='mb-8 p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6'>
+                {/* Date Carousel */}
+                <div className='flex items-center gap-3 w-full lg:w-auto overflow-x-auto pb-2 lg:pb-0 scrollbar-none'>
+                    <span className='text-xs font-semibold text-gray-400 uppercase tracking-wider shrink-0 flex items-center gap-1.5'>
+                        <Calendar className='w-4 h-4 text-primary' /> Date:
+                    </span>
+                    <div className='flex items-center gap-2'>
+                        {dateList.slice(0, 7).map((item, idx) => {
+                            const isSelected = selectedDateObj?.fullDate === item.fullDate
+                            return (
+                                <button
+                                    key={idx}
+                                    onClick={() => setSelectedDateObj(item)}
+                                    className={`flex flex-col items-center justify-center px-3 py-1.5 rounded-xl text-xs transition-all duration-200 cursor-pointer min-w-[52px] ${
+                                        isSelected
+                                            ? 'bg-primary text-white shadow-md font-bold scale-105'
+                                            : 'bg-black/40 border border-gray-800 text-gray-300 hover:border-gray-600'
+                                    }`}
+                                >
+                                    <span className='text-[10px] font-medium'>{item.day}</span>
+                                    <span className='font-bold text-sm'>{item.date}</span>
+                                </button>
+                            )
+                        })}
+                    </div>
+                </div>
+
+                {/* Showtime Slots */}
+                <div className='flex items-center gap-3 w-full lg:w-auto overflow-x-auto pb-2 lg:pb-0 scrollbar-none'>
+                    <span className='text-xs font-semibold text-gray-400 uppercase tracking-wider shrink-0 flex items-center gap-1.5'>
+                        <Clock className='w-4 h-4 text-primary' /> Showtime:
+                    </span>
+                    <div className='flex items-center gap-2'>
+                        {SHOW_TIMES.map((time, idx) => {
+                            const isSelected = selectedTime === time
+                            return (
+                                <button
+                                    key={idx}
+                                    onClick={() => setSelectedTime(time)}
+                                    className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer ${
+                                        isSelected
+                                            ? 'bg-primary text-white shadow-md scale-105'
+                                            : 'bg-black/40 border border-gray-800 text-gray-300 hover:border-gray-600'
+                                    }`}
+                                >
+                                    {time}
+                                </button>
+                            )
+                        })}
+                    </div>
                 </div>
             </div>
 
             {/* Cinema Screen Visual Graphic */}
-            <div className='flex flex-col items-center my-8'>
+            <div className='flex flex-col items-center my-6'>
                 <div className='relative w-full max-w-2xl h-14 flex flex-col items-center justify-center overflow-hidden'>
-                    {/* Glowing Arc Screen */}
                     <div className='w-[110%] h-24 rounded-[100%] border-t-4 border-primary/80 bg-gradient-to-b from-primary/30 via-primary/5 to-transparent shadow-[0_-15px_30px_rgba(226,1,55,0.4)] transform -rotate-1' />
                     <p className='absolute top-2 text-[11px] font-semibold tracking-widest text-gray-400 uppercase'>
                         All Eyes This Way — Screen
@@ -197,24 +256,20 @@ const SeatLayout = () => {
                 </div>
             </div>
 
-            {/* Main Seating Map Grid */}
-            <div className='flex flex-col items-center gap-3 overflow-x-auto py-6 pb-12 scrollbar-none'>
+            {/* Seating Grid */}
+            <div className='flex flex-col items-center gap-3 overflow-x-auto py-4 pb-10 scrollbar-none'>
                 {ROWS.map((rowObj) => {
                     const { row, type, price } = rowObj
                     return (
                         <div key={row} className='flex items-center gap-2 sm:gap-3 min-w-max'>
-                            {/* Row Label */}
                             <span className='w-6 text-center text-xs font-bold text-gray-400'>{row}</span>
 
-                            {/* Seats Array */}
                             <div className='flex items-center gap-1.5 sm:gap-2'>
                                 {Array.from({ length: SEATS_PER_ROW }, (_, i) => {
                                     const seatNumber = i + 1
                                     const seatId = `${row}${seatNumber}`
                                     const isOccupied = occupiedSeats.has(seatId)
                                     const isSelected = selectedSeats.includes(seatId)
-
-                                    // Add aisle space after seat 4 and seat 8
                                     const hasAisle = seatNumber === 4 || seatNumber === 8
 
                                     return (
@@ -222,7 +277,7 @@ const SeatLayout = () => {
                                             <button
                                                 onClick={() => handleSeatClick(seatId, isOccupied)}
                                                 disabled={isOccupied}
-                                                title={`${seatId} - ${type} ($${price})`}
+                                                title={`${seatId} - ${type} (₹${price})`}
                                                 className={`w-7 h-7 sm:w-9 sm:h-9 rounded-t-lg text-[10px] sm:text-xs font-semibold flex items-center justify-center transition-all duration-200 cursor-pointer ${
                                                     isOccupied
                                                         ? 'bg-gray-800/60 border border-gray-800 text-gray-600 cursor-not-allowed line-through'
@@ -240,16 +295,15 @@ const SeatLayout = () => {
                                 })}
                             </div>
 
-                            {/* Row Price Tag */}
                             <span className='text-[11px] text-gray-500 font-mono ml-2 hidden sm:inline'>
-                                ${price}
+                                ₹{price}
                             </span>
                         </div>
                     )
                 })}
             </div>
 
-            {/* Seat Map Legend */}
+            {/* Seat Legend */}
             <div className='flex flex-wrap items-center justify-center gap-6 py-4 border-t border-b border-gray-800/80 my-6 text-xs sm:text-sm text-gray-300'>
                 <div className='flex items-center gap-2'>
                     <div className='w-5 h-5 rounded-t-md bg-neutral-900 border border-gray-700/70' />
@@ -267,17 +321,17 @@ const SeatLayout = () => {
                 </div>
                 <div className='flex items-center gap-2 text-gray-400 border-l border-gray-800 pl-6 hidden md:flex'>
                     <span className='w-2 h-2 rounded-full bg-amber-400' />
-                    <span>VIP Recliner ($18)</span>
+                    <span>VIP Recliner (₹350)</span>
                     <span className='w-2 h-2 rounded-full bg-blue-400 ml-2' />
-                    <span>Executive ($14)</span>
+                    <span>Executive (₹250)</span>
                     <span className='w-2 h-2 rounded-full bg-emerald-400 ml-2' />
-                    <span>Standard ($10)</span>
+                    <span>Standard (₹180)</span>
                 </div>
             </div>
 
-            {/* Bottom Checkout & Ticket Summary Bar */}
-            <div className='sticky bottom-4 z-40 mt-8 p-5 rounded-2xl bg-gradient-to-r from-neutral-900/95 via-neutral-900/98 to-neutral-900/95 border border-red-900/40 backdrop-blur-xl shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6'>
-                <div className='flex flex-col sm:flex-row items-center gap-6 w-full md:w-auto text-center sm:text-left'>
+            {/* Checkout & Email Bar */}
+            <div className='sticky bottom-4 z-40 mt-8 p-5 rounded-2xl bg-gradient-to-r from-neutral-900/95 via-neutral-900/98 to-neutral-900/95 border border-red-900/40 backdrop-blur-xl shadow-2xl flex flex-col lg:flex-row items-center justify-between gap-6'>
+                <div className='flex flex-col sm:flex-row items-center gap-6 w-full lg:w-auto text-center sm:text-left'>
                     <div className='flex items-center gap-3'>
                         <div className='w-12 h-12 rounded-xl bg-primary/20 border border-primary/30 flex items-center justify-center text-primary shrink-0'>
                             <Armchair className='w-6 h-6' />
@@ -290,18 +344,23 @@ const SeatLayout = () => {
                         </div>
                     </div>
 
-                    {selectedSeats.length > 0 && (
-                        <div className='border-t sm:border-t-0 sm:border-l border-gray-800 pt-3 sm:pt-0 sm:pl-6 text-xs text-gray-400 space-y-0.5'>
-                            <p>Subtotal: <span className='text-white font-medium'>${calculateSubtotal().toFixed(2)}</span></p>
-                            <p>Convenience Fee: <span className='text-white font-medium'>${convenienceFee.toFixed(2)}</span></p>
-                        </div>
-                    )}
+                    {/* Email Input Field */}
+                    <div className='flex items-center gap-2 bg-black/60 border border-gray-800 rounded-xl px-3.5 py-2 w-full sm:w-64'>
+                        <Mail className='w-4 h-4 text-primary shrink-0' />
+                        <input
+                            type='email'
+                            value={userEmail}
+                            onChange={(e) => setUserEmail(e.target.value)}
+                            placeholder='Ticket Delivery Email'
+                            className='bg-transparent text-xs text-white placeholder-gray-500 focus:outline-none w-full'
+                        />
+                    </div>
                 </div>
 
-                <div className='flex items-center gap-6 w-full md:w-auto justify-between md:justify-end'>
+                <div className='flex items-center gap-6 w-full lg:w-auto justify-between lg:justify-end'>
                     <div className='text-right'>
                         <p className='text-xs text-gray-400'>Total Amount</p>
-                        <p className='text-2xl font-extrabold text-primary'>${totalAmount.toFixed(2)}</p>
+                        <p className='text-2xl font-extrabold text-primary'>₹{totalAmount.toFixed(2)}</p>
                     </div>
 
                     <button
@@ -313,6 +372,96 @@ const SeatLayout = () => {
                     </button>
                 </div>
             </div>
+
+            {/* Delivered Email Ticket Modal */}
+            {emailModalBooking && (
+                <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 overflow-y-auto'>
+                    <div className='relative w-full max-w-lg bg-neutral-900 border border-gray-800 rounded-3xl overflow-hidden shadow-2xl text-left'>
+                        <div className='bg-emerald-600/20 border-b border-emerald-500/30 p-6 flex items-center justify-between'>
+                            <div className='flex items-center gap-3'>
+                                <div className='w-10 h-10 rounded-full bg-emerald-500/30 flex items-center justify-center text-emerald-400'>
+                                    <Mail className='w-5 h-5' />
+                                </div>
+                                <div>
+                                    <h3 className='text-base font-bold text-white'>Ticket Emailed Successfully!</h3>
+                                    <p className='text-xs text-emerald-300'>Sent to {emailModalBooking.userEmail}</p>
+                                </div>
+                            </div>
+                            <button
+                                onClick={() => {
+                                    setEmailModalBooking(null)
+                                    navigate('/mybooking')
+                                }}
+                                className='p-1.5 rounded-full bg-black/50 text-gray-300 hover:text-white transition cursor-pointer'
+                            >
+                                <X className='w-5 h-5' />
+                            </button>
+                        </div>
+
+                        {/* Email HTML Body Preview */}
+                        <div className='p-6 space-y-4 text-xs text-gray-300 bg-black/40'>
+                            <div className='border-b border-gray-800 pb-3 flex items-center justify-between text-gray-400'>
+                                <span>Subject: <strong>Your ONIX Movie Ticket Order #{emailModalBooking.id}</strong></span>
+                                <span>{emailModalBooking.emailSentAt}</span>
+                            </div>
+
+                            <div className='p-5 bg-neutral-950 rounded-2xl border border-gray-800 space-y-3 text-gray-200'>
+                                <div className='flex items-center gap-3'>
+                                    <Film className='w-6 h-6 text-primary' />
+                                    <div>
+                                        <h4 className='text-base font-bold text-white'>{emailModalBooking.movieTitle}</h4>
+                                        <p className='text-xs text-gray-400'>{emailModalBooking.theatre}</p>
+                                    </div>
+                                </div>
+
+                                <div className='grid grid-cols-2 gap-3 text-xs bg-white/5 p-3 rounded-xl border border-white/10'>
+                                    <div>
+                                        <span className='text-gray-400 block text-[10px]'>Show Date & Time</span>
+                                        <strong className='text-white'>{emailModalBooking.formattedShowDate} @ {emailModalBooking.showTime}</strong>
+                                    </div>
+                                    <div>
+                                        <span className='text-gray-400 block text-[10px]'>Booked Seats</span>
+                                        <strong className='text-primary text-sm'>{emailModalBooking.seats?.join(', ')}</strong>
+                                    </div>
+                                    <div>
+                                        <span className='text-gray-400 block text-[10px]'>Total Amount Paid</span>
+                                        <strong className='text-emerald-400'>₹{emailModalBooking.totalAmount?.toFixed(2)}</strong>
+                                    </div>
+                                    <div>
+                                        <span className='text-gray-400 block text-[10px]'>Ticket Reference ID</span>
+                                        <strong className='text-white font-mono'>{emailModalBooking.id}</strong>
+                                    </div>
+                                </div>
+
+                                <p className='text-[11px] text-gray-400 pt-2 text-center'>
+                                    Present this digital pass at the theater gate or scan the QR code.
+                                </p>
+                            </div>
+
+                            <div className='flex items-center justify-between pt-2'>
+                                <button
+                                    onClick={() => {
+                                        window.print()
+                                    }}
+                                    className='flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/15 text-white rounded-xl text-xs font-medium cursor-pointer transition'
+                                >
+                                    <Printer className='w-4 h-4' /> Print E-Ticket
+                                </button>
+
+                                <button
+                                    onClick={() => {
+                                        setEmailModalBooking(null)
+                                        navigate('/mybooking')
+                                    }}
+                                    className='flex items-center gap-2 px-6 py-2 bg-primary hover:bg-primary-dull text-white rounded-xl text-xs font-semibold cursor-pointer shadow-md'
+                                >
+                                    View My Bookings
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

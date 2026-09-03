@@ -27,6 +27,7 @@ const MovieDetail = () => {
     // Generate upcoming 10 days for date picker
     const [dateList, setDateList] = useState([])
     const [selectedDate, setSelectedDate] = useState(null)
+    const [selectedTime, setSelectedTime] = useState('05:00 PM')
     const [dateStartIndex, setDateStartIndex] = useState(0)
 
     useEffect(() => {
@@ -62,7 +63,7 @@ const MovieDetail = () => {
 
     const handleBookNow = () => {
         if (selectedDate) {
-            navigate(`/movie/${movie._id || movie.id}/${selectedDate.fullDate}`)
+            navigate(`/movie/${movie._id || movie.id}/${selectedDate.fullDate}?time=${encodeURIComponent(selectedTime)}`)
         }
     }
 

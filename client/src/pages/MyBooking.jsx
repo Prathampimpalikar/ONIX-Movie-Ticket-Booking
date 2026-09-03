@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Ticket, Calendar, Clock, MapPin, QrCode, Trash2, Film, CheckCircle2, X, AlertCircle } from 'lucide-react'
+import { Ticket, Calendar, Clock, MapPin, QrCode, Trash2, Film, CheckCircle2, X, AlertCircle, Mail, Send } from 'lucide-react'
 import { useBookings } from '../context/BookingsContext'
 import BlurCircle from '../component/BlurCircle'
 
 const MyBooking = () => {
-    const { bookings, cancelBooking } = useBookings()
+    const { bookings, resendEmailTicket, cancelBooking } = useBookings()
     const navigate = useNavigate()
 
     const [selectedTicket, setSelectedTicket] = useState(null)
@@ -25,7 +25,7 @@ const MyBooking = () => {
                     <div>
                         <h1 className='text-2xl md:text-3xl font-bold text-white'>My Bookings</h1>
                         <p className='text-xs sm:text-sm text-gray-400 mt-0.5'>
-                            Manage your active movie tickets and digital passes
+                            Manage your active movie tickets, email confirmations, and digital passes
                         </p>
                     </div>
                 </div>
@@ -95,18 +95,32 @@ const MyBooking = () => {
                                         </div>
                                     </div>
 
-                                    <div className='flex flex-wrap items-center gap-4 mt-4 text-xs sm:text-sm'>
-                                        <div className='bg-red-950/40 border border-red-900/50 px-3.5 py-1.5 rounded-xl text-red-200'>
-                                            Seats: <strong className='text-white font-bold'>{booking.seats?.join(', ')}</strong> ({booking.seats?.length} tickets)
+                                    <div className='flex flex-wrap items-center justify-between gap-4 mt-4 text-xs sm:text-sm'>
+                                        <div className='flex flex-wrap items-center gap-3'>
+                                            <div className='bg-red-950/40 border border-red-900/50 px-3.5 py-1.5 rounded-xl text-red-200'>
+                                                Seats: <strong className='text-white font-bold'>{booking.seats?.join(', ')}</strong> ({booking.seats?.length} tickets)
+                                            </div>
+                                            <div className='flex items-center gap-1.5 text-gray-400 text-xs bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl'>
+                                                <Mail className='w-3.5 h-3.5 text-primary' />
+                                                <span className='truncate max-w-[160px]'>{booking.userEmail || 'user@onix.com'}</span>
+                                            </div>
                                         </div>
+
                                         <div className='text-gray-400'>
-                                            Total Paid: <strong className='text-emerald-400 text-base font-bold'>${booking.totalAmount?.toFixed(2)}</strong>
+                                            Total Paid: <strong className='text-emerald-400 text-base font-bold'>₹{booking.totalAmount?.toFixed(2)}</strong>
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* Action Buttons */}
                                 <div className='flex flex-wrap items-center justify-end gap-3 pt-4 border-t border-gray-800/80'>
+                                    <button
+                                        onClick={() => resendEmailTicket(booking.id)}
+                                        className='flex items-center gap-1.5 px-4 py-2 bg-white/5 hover:bg-white/15 border border-white/10 text-gray-200 rounded-xl text-xs sm:text-sm font-medium transition cursor-pointer'
+                                    >
+                                        <Send className='w-3.5 h-3.5 text-primary' /> Resend Ticket Email
+                                    </button>
+
                                     <button
                                         onClick={() => setCancelId(booking.id)}
                                         className='flex items-center gap-1.5 px-4 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 rounded-xl text-xs sm:text-sm font-medium transition cursor-pointer'
@@ -167,10 +181,14 @@ const MyBooking = () => {
                                 </div>
                             </div>
 
+                            <div className='flex items-center gap-2 text-xs text-gray-400 bg-white/5 p-3 rounded-xl border border-white/10'>
+                                <Mail className='w-4 h-4 text-primary shrink-0' />
+                                <span>Ticket sent to: <strong className='text-white'>{selectedTicket.userEmail || 'user@onix.com'}</strong></span>
+                            </div>
+
                             {/* Simulated QR Code */}
                             <div className='flex flex-col items-center justify-center p-6 bg-white rounded-2xl text-black shadow-inner my-4'>
                                 <div className='w-36 h-36 border-4 border-black p-2 bg-white flex items-center justify-center rounded-lg'>
-                                    {/* Simulated Barcode / QR pattern */}
                                     <div className='w-full h-full bg-[radial-gradient(#000_2px,transparent_2px)] [background-size:8px_8px] flex items-center justify-center'>
                                         <Film className='w-12 h-12 text-black' />
                                     </div>

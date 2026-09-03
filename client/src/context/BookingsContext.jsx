@@ -29,12 +29,20 @@ export const BookingsProvider = ({ children }) => {
             ...newBookingData,
             createdAt: new Date().toISOString(),
             status: 'CONFIRMED',
-            isPaid: true
+            isPaid: true,
+            emailSentAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         }
 
         setBookings((prev) => [booking, ...prev])
-        toast.success(`Booking confirmed for ${newBookingData.movieTitle || 'your movie'}!`)
+        toast.success(`Booking confirmed! Email ticket sent to ${newBookingData.userEmail}`)
         return booking
+    }
+
+    const resendEmailTicket = (bookingId) => {
+        const target = bookings.find((b) => b.id === bookingId)
+        if (target) {
+            toast.success(`Ticket email resent to ${target.userEmail}!`)
+        }
     }
 
     const cancelBooking = (bookingId) => {
@@ -43,7 +51,7 @@ export const BookingsProvider = ({ children }) => {
     }
 
     return (
-        <BookingsContext.Provider value={{ bookings, addBooking, cancelBooking }}>
+        <BookingsContext.Provider value={{ bookings, addBooking, resendEmailTicket, cancelBooking }}>
             {children}
         </BookingsContext.Provider>
     )
