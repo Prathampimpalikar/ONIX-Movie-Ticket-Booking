@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
-import { ChevronLeft, ChevronRight, Calendar, Clock, Ticket, Mail, CheckCircle2, Armchair, ShieldCheck, Download, Printer, X, Film } from 'lucide-react'
+import { ChevronLeft, Calendar, Clock, Ticket, Mail, CheckCircle2, Armchair, ExternalLink, Printer, X, Film } from 'lucide-react'
 import { dummyShowsData } from '../assets/assets'
 import BlurCircle from '../component/BlurCircle'
 import { useBookings } from '../context/BookingsContext'
@@ -51,7 +51,7 @@ const SeatLayout = () => {
 
     const movie = dummyShowsData.find((m) => String(m._id || m.id) === String(id)) || dummyShowsData[0]
 
-    // Generate upcoming 10 days
+    // Generate upcoming 14 days
     const [dateList, setDateList] = useState([])
     const [selectedDateObj, setSelectedDateObj] = useState(null)
     const [selectedTime, setSelectedTime] = useState(initialTime)
@@ -106,6 +106,26 @@ const SeatLayout = () => {
 
     const convenienceFee = selectedSeats.length > 0 ? selectedSeats.length * 30 : 0
     const totalAmount = calculateSubtotal() + convenienceFee
+
+    // Helper to generate mailto URL for direct email client opening
+    const generateMailtoUrl = (booking) => {
+        const subject = encodeURIComponent(`🎟️ ONIX Ticket Order #${booking.id} - ${booking.movieTitle}`)
+        const body = encodeURIComponent(
+            `OFFICIAL ONIX MOVIE TICKET CONFIRMATION\n` +
+            `======================================\n\n` +
+            `Website: ONIX Movie Ticket Booking\n` +
+            `Movie Name: ${booking.movieTitle}\n` +
+            `Cinema Hall: ${booking.theatre}\n` +
+            `Show Date: ${booking.formattedShowDate}\n` +
+            `Show Time: ${booking.showTime}\n` +
+            `Reserved Seats: ${booking.seats?.join(', ')}\n` +
+            `Total Amount Paid: ₹${booking.totalAmount?.toFixed(2)}\n` +
+            `Ticket ID: ${booking.id}\n\n` +
+            `Scan your digital QR stub at the ONIX cinema entrance 15 minutes before showtime.\n` +
+            `Thank you for booking with ONIX!`
+        )
+        return `mailto:${booking.userEmail}?subject=${subject}&body=${body}`
+    }
 
     const handleProceedToBook = () => {
         if (selectedSeats.length === 0) {
@@ -383,8 +403,8 @@ const SeatLayout = () => {
                                     <Mail className='w-5 h-5' />
                                 </div>
                                 <div>
-                                    <h3 className='text-base font-bold text-white'>Ticket Emailed Successfully!</h3>
-                                    <p className='text-xs text-emerald-300'>Sent to {emailModalBooking.userEmail}</p>
+                                    <h3 className='text-base font-bold text-white'>ONIX Email Ticket Sent!</h3>
+                                    <p className='text-xs text-emerald-300'>Delivered to {emailModalBooking.userEmail}</p>
                                 </div>
                             </div>
                             <button
@@ -398,64 +418,70 @@ const SeatLayout = () => {
                             </button>
                         </div>
 
-                        {/* Email HTML Body Preview */}
+                        {/* Email Preview Content */}
                         <div className='p-6 space-y-4 text-xs text-gray-300 bg-black/40'>
                             <div className='border-b border-gray-800 pb-3 flex items-center justify-between text-gray-400'>
-                                <span>Subject: <strong>Your ONIX Movie Ticket Order #{emailModalBooking.id}</strong></span>
+                                <span>From: <strong>ONIX Cinema Tickets &lt;tickets@onix.com&gt;</strong></span>
                                 <span>{emailModalBooking.emailSentAt}</span>
                             </div>
 
                             <div className='p-5 bg-neutral-950 rounded-2xl border border-gray-800 space-y-3 text-gray-200'>
-                                <div className='flex items-center gap-3'>
-                                    <Film className='w-6 h-6 text-primary' />
+                                <div className='flex items-center justify-between border-b border-gray-800 pb-2'>
+                                    <span className='text-sm font-extrabold tracking-wider text-primary'>ONIX CINEMAS</span>
+                                    <span className='text-[10px] font-mono bg-white/10 px-2 py-0.5 rounded text-gray-300'>OFFICIAL PASS</span>
+                                </div>
+
+                                <div className='flex items-center gap-3 pt-1'>
+                                    <Film className='w-7 h-7 text-primary shrink-0' />
                                     <div>
                                         <h4 className='text-base font-bold text-white'>{emailModalBooking.movieTitle}</h4>
                                         <p className='text-xs text-gray-400'>{emailModalBooking.theatre}</p>
                                     </div>
                                 </div>
 
-                                <div className='grid grid-cols-2 gap-3 text-xs bg-white/5 p-3 rounded-xl border border-white/10'>
+                                <div className='grid grid-cols-2 gap-3 text-xs bg-white/5 p-3.5 rounded-xl border border-white/10 mt-3'>
                                     <div>
-                                        <span className='text-gray-400 block text-[10px]'>Show Date & Time</span>
-                                        <strong className='text-white'>{emailModalBooking.formattedShowDate} @ {emailModalBooking.showTime}</strong>
+                                        <span className='text-gray-400 block text-[10px]'>Show Date</span>
+                                        <strong className='text-white'>{emailModalBooking.formattedShowDate}</strong>
                                     </div>
                                     <div>
-                                        <span className='text-gray-400 block text-[10px]'>Booked Seats</span>
+                                        <span className='text-gray-400 block text-[10px]'>Show Time</span>
+                                        <strong className='text-white'>{emailModalBooking.showTime}</strong>
+                                    </div>
+                                    <div>
+                                        <span className='text-gray-400 block text-[10px]'>Reserved Seats</span>
                                         <strong className='text-primary text-sm'>{emailModalBooking.seats?.join(', ')}</strong>
                                     </div>
                                     <div>
                                         <span className='text-gray-400 block text-[10px]'>Total Amount Paid</span>
-                                        <strong className='text-emerald-400'>₹{emailModalBooking.totalAmount?.toFixed(2)}</strong>
-                                    </div>
-                                    <div>
-                                        <span className='text-gray-400 block text-[10px]'>Ticket Reference ID</span>
-                                        <strong className='text-white font-mono'>{emailModalBooking.id}</strong>
+                                        <strong className='text-emerald-400 text-sm'>₹{emailModalBooking.totalAmount?.toFixed(2)}</strong>
                                     </div>
                                 </div>
 
-                                <p className='text-[11px] text-gray-400 pt-2 text-center'>
-                                    Present this digital pass at the theater gate or scan the QR code.
-                                </p>
+                                <div className='pt-2 text-center'>
+                                    <p className='text-[10px] font-mono text-gray-400 uppercase tracking-widest'>
+                                        Ticket Reference Code: <strong className='text-white font-bold'>{emailModalBooking.id}</strong>
+                                    </p>
+                                </div>
                             </div>
 
-                            <div className='flex items-center justify-between pt-2'>
+                            <div className='flex flex-wrap items-center justify-between gap-3 pt-2'>
+                                <a
+                                    href={generateMailtoUrl(emailModalBooking)}
+                                    target='_blank'
+                                    rel='noreferrer'
+                                    className='flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold cursor-pointer transition shadow-md'
+                                >
+                                    <ExternalLink className='w-4 h-4' /> Open in Gmail / Mail App
+                                </a>
+
                                 <button
                                     onClick={() => {
                                         window.print()
                                     }}
-                                    className='flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/15 text-white rounded-xl text-xs font-medium cursor-pointer transition'
+                                    className='flex items-center gap-2 px-4 py-2.5 bg-white/10 hover:bg-white/20 border border-white/15 text-white rounded-xl text-xs font-medium cursor-pointer transition'
                                 >
-                                    <Printer className='w-4 h-4' /> Print E-Ticket
-                                </button>
-
-                                <button
-                                    onClick={() => {
-                                        setEmailModalBooking(null)
-                                        navigate('/mybooking')
-                                    }}
-                                    className='flex items-center gap-2 px-6 py-2 bg-primary hover:bg-primary-dull text-white rounded-xl text-xs font-semibold cursor-pointer shadow-md'
-                                >
-                                    View My Bookings
+                                    <Printer className='w-4 h-4' /> Print Ticket Stub
                                 </button>
                             </div>
                         </div>
